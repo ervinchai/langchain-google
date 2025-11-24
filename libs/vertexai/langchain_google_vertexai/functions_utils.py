@@ -46,6 +46,7 @@ _GoogleSearchRetrievalLike = Union[
 _GoogleSearchLike = Union[gapic.Tool.GoogleSearch, dict[str, Any]]
 _RetrievalLike = Union[gapic.Retrieval, dict[str, Any]]
 _CodeExecutionLike = Union[gapic.Tool.CodeExecution, dict[str, Any]]
+_UrlContextLike = Union[gapic.UrlContext, dict[str, Any]]
 
 
 class _ToolDictLike(TypedDict):
@@ -54,6 +55,7 @@ class _ToolDictLike(TypedDict):
     google_search: _GoogleSearchLike | None
     retrieval: _RetrievalLike | None
     code_execution: NotRequired[_CodeExecutionLike]
+    url_context: _UrlContextLike | None
 
 
 _ToolType = Union[gapic.Tool, vertexai.Tool, _ToolDictLike, _FunctionDeclarationLike]
@@ -315,6 +317,8 @@ def _format_to_gapic_tool(tools: _ToolsType) -> gapic.Tool:
                 gapic_tool.google_search = rt.google_search
             if "code_execution" in rt:
                 gapic_tool.code_execution = rt.code_execution
+            if "url_context" in rt:
+                gapic_tool.url_context = rt.url_context
         elif isinstance(tool, dict):
             # not _ToolDictLike
             if not any(
@@ -325,6 +329,7 @@ def _format_to_gapic_tool(tools: _ToolsType) -> gapic.Tool:
                     "google_search",
                     "retrieval",
                     "code_execution",
+                    "url_context",
                 ]
             ):
                 # Type ignore: tool is dict but mypy can't verify it's valid
@@ -361,6 +366,10 @@ def _format_to_gapic_tool(tools: _ToolsType) -> gapic.Tool:
             if "code_execution" in tool:
                 gapic_tool.code_execution = gapic.Tool.CodeExecution(
                     tool["code_execution"]
+                )
+            if "url_context" in tool:
+                gapic_tool.url_context = gapic.UrlContext(
+                    tool["url_context"]
                 )
         else:
             fd = _format_to_gapic_function_declaration(tool)

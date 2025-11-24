@@ -2736,6 +2736,10 @@ class ChatVertexAI(_VertexAICommon, BaseChatModel):
                 message.response_metadata["grounding_metadata"] = info.pop(
                     "grounding_metadata"
                 )
+            if "url_context_metadata" in info:
+                message.response_metadata["url_context_metadata"] = info.pop(
+                    "url_context_metadata"
+                )
             if isinstance(message, AIMessage):
                 message.usage_metadata = lc_usage
             generations.append(ChatGeneration(message=message, generation_info=info))

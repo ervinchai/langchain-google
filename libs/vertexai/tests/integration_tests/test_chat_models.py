@@ -1701,3 +1701,16 @@ def test_code_execution_builtin(output_version: str) -> None:
     }
     response = llm.invoke([input_message, full, next_message])
     _check_code_execution_output(response, output_version)
+
+
+def test_url_context_builtin() -> None:
+    """Test the built-in URL Context tool."""
+    llm = ChatVertexAI(model=_DEFAULT_MODEL_NAME).bind_tools([{"url_context": {}}])
+    input_message = {
+        "role": "user",
+        "content": "What is this page's contents about? https://docs.langchain.com",
+    }
+    
+    response = llm.invoke([input_message])
+    assert isinstance(response, AIMessage)
+    assert "url_context_metadata" in response.response_metadata

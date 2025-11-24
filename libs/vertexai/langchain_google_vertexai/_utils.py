@@ -262,6 +262,16 @@ def get_generation_info(
         if valid_log_probs:
             info["logprobs_result"] = valid_log_probs
 
+    # Check for url_context_metadata attribute - only available on Candidate
+    if not isinstance(candidate, TextGenerationResponse):
+        try:
+            if candidate.url_context_metadata:
+                info["url_context_metadata"] = proto.Message.to_dict(
+                    candidate.url_context_metadata
+                )
+        except AttributeError:
+            pass
+
     # Check for grounding_metadata attribute - only available on Candidate
     if not isinstance(candidate, TextGenerationResponse):
         try:
